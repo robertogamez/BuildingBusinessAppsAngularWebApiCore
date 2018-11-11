@@ -45,13 +45,14 @@ namespace TourManagement.API.Controllers
         //}    
 
         [HttpGet("{tourId}")]
+        [RequestHeaderMatchesMediaType("Accept", new[] { "application/json" })]
         public async Task<IActionResult> GetDefaultTour(Guid tourId)
         {
             return await GetSpecificTour<Tour>(tourId);
         }
 
         [HttpGet("{tourId}", Name = "GetTour")]
-        [RequestHeaderMatchesMediaType("Accept", new[] { "application/vnd.martin.tour+json" })]
+        [RequestHeaderMatchesMediaType("Accept", new[] { "application/json", "application/vnd.martin.tour+json" })]
         public async Task<IActionResult> GetTour(Guid tourId)
         {
             return await GetSpecificTour<Tour>(tourId);
@@ -97,10 +98,10 @@ namespace TourManagement.API.Controllers
         }
 
         [HttpPost]
-        [RequestHeaderMatchesMediaType("Accept", 
+        [RequestHeaderMatchesMediaType("Content-Type", 
             new[] {
                 "application/json",
-                "application/vnd.martin.tour+json" })]
+                "application/vnd.marvin.tour+json" })]
         public async Task<IActionResult> AddTour([FromBody]TourForCreation tour)
         {
             if (tour == null)
@@ -112,7 +113,7 @@ namespace TourManagement.API.Controllers
         }
 
         [HttpPost]
-        [RequestHeaderMatchesMediaType("Accept",
+        [RequestHeaderMatchesMediaType("Content-Type",
             new[] { "application/vnd.marvin.tourwithmanagerforcreation+json" })]
         public async Task<IActionResult> AddTourWithManager(
             [FromBody]TourWithManagerForCreation tour)

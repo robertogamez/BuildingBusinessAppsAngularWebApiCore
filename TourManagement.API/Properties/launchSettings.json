@@ -12,7 +12,7 @@
       "commandName": "IISExpress",
       "launchUrl": "api/tours",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Production"
       }
     },
     "TourManagement.API": {

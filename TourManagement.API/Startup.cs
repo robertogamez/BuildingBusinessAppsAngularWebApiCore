@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -49,6 +50,8 @@ namespace TourManagement.API
                     jsonInputFormatter.SupportedMediaTypes.Add("application/vnd.marvin.tourwithestimatedprofits+json");
                     jsonInputFormatter.SupportedMediaTypes.Add("application/vnd.marvin.tourwithshowsforcreation+json");
                     jsonInputFormatter.SupportedMediaTypes.Add("application/vnd.marvin.tourwithmanagerandshowsforcreation+json");
+                    jsonInputFormatter.SupportedMediaTypes.Add("application/vnd.marvin.tourwithmanagerforcreation+json");
+                    jsonInputFormatter.SupportedMediaTypes.Add("application/vnd.marvin.showcollectionforcreation+json");
                 }
             })
             .AddJsonOptions(options =>
@@ -96,6 +99,8 @@ namespace TourManagement.API
                 {
                     appBuilder.Run(async context =>
                     {
+                        var exceptionHandlerFeature = context.Features.Get<IExceptionHandlerFeature>();
+
                         context.Response.StatusCode = 500;
                         await context.Response.WriteAsync("An unexpected fault happened. Try again later.");
                     });
