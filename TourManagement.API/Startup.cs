@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Linq;
+using TourManagement.API.Dtos;
 using TourManagement.API.Services;
 
 namespace TourManagement.API
@@ -35,6 +36,9 @@ namespace TourManagement.API
                 {
                     jsonOutputFormatter.SupportedMediaTypes.Add("application/vnd.marvin.tour+json");
                     jsonOutputFormatter.SupportedMediaTypes.Add("application/vnd.marvin.tourwithestimatedprofits+json");
+                    jsonOutputFormatter.SupportedMediaTypes.Add("application/vnd.marvin.tourwithshows+json");
+                    jsonOutputFormatter.SupportedMediaTypes.Add("application/vnd.marvin.tourwithestimatedprofitsandshows+json");
+
                 }
 
                 var jsonInputFormatter = setupAction.InputFormatters
@@ -43,6 +47,8 @@ namespace TourManagement.API
                 {
                     jsonInputFormatter.SupportedMediaTypes.Add("application/vnd.marvin.tour+json");
                     jsonInputFormatter.SupportedMediaTypes.Add("application/vnd.marvin.tourwithestimatedprofits+json");
+                    jsonInputFormatter.SupportedMediaTypes.Add("application/vnd.marvin.tourwithshowsforcreation+json");
+                    jsonInputFormatter.SupportedMediaTypes.Add("application/vnd.marvin.tourwithmanagerandshowsforcreation+json");
                 }
             })
             .AddJsonOptions(options =>
@@ -107,6 +113,16 @@ namespace TourManagement.API
                 config.CreateMap<Entities.Show, Dtos.Show>();
                 config.CreateMap<Dtos.TourForCreation, Entities.Tour>();
                 config.CreateMap<Dtos.TourWithManagerForCreation, Entities.Tour>();
+
+                config.CreateMap<Entities.Tour, TourWithShows>()
+                .ForMember(d => d.Band, o => o.MapFrom(s => s.Band.Name));
+
+                config.CreateMap<Entities.Tour, Dtos.TourWithEstimatedProfitsAndShows>()
+                    .ForMember(d => d.Band, o => o.MapFrom(s => s.Band.Name));
+
+                config.CreateMap<Dtos.TourWithShowsForCreation, Entities.Tour>();
+                config.CreateMap<Dtos.TourWithManagerAndShowsForCreation, Entities.Tour>();
+                config.CreateMap<Dtos.ShowForCreation, Entities.Show>();
             });
 
             // Enable CORS
