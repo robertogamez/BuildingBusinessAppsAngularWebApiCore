@@ -14,6 +14,7 @@ import { TourWithShows } from './tour-with-shows.model';
 import { TourWithEstimatedProfitsAndShows } from './tour-with-estimated-profits-and-shows.model';
 import { TourWithShowsForCreation } from './tour-with-shows-for-creation.model';
 import { TourWithManagerAndShowsForCreation } from './tour-with-manager-and-shows-for-creation.model';
+import { Operation } from 'fast-json-patch';
 
 @Injectable()
 export class TourService extends BaseService {
@@ -63,6 +64,15 @@ export class TourService extends BaseService {
     addTourWithManagerAndShows(tourToAdd: TourWithManagerAndShowsForCreation): Observable<Tour> {
         return this.http.post<Tour>(`${this.apiUrl}/tours`, tourToAdd,
             { headers: { 'Content-Type': 'application/vnd.marvin.tourwithmanagerandshowsforcreation+json' } });
+    }
+
+    partiallyUpdateTour(tourId: string, pathDocument: Operation[]): Observable<any> {
+        return this.http.patch(`${this.apiUrl}/tours/${tourId}`, pathDocument,
+        {
+            headers: {
+                'Content-Type': 'application/json-patch+json'
+            }
+        })
     }
 
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -52,7 +53,7 @@ namespace TourManagement.API.Controllers
         }
 
         [HttpGet("{tourId}", Name = "GetTour")]
-        [RequestHeaderMatchesMediaType("Accept", new[] { "application/json", "application/vnd.martin.tour+json" })]
+        [RequestHeaderMatchesMediaType("Accept", new[] { "application/vnd.martin.tour+json" })]
         public async Task<IActionResult> GetTour(Guid tourId)
         {
             return await GetSpecificTour<Tour>(tourId);
@@ -179,6 +180,38 @@ namespace TourManagement.API.Controllers
             return CreatedAtRoute("GetTour",
                 new { tourId = tourEntity.TourId },
                 tourToReturn);
+        }
+
+        [HttpPatch("{tourId}")]
+        public async Task<IActionResult> PartiallyUpdateTour(Guid tourId,
+            [FromBody]JsonPatchDocument<TourForUpdate> jsonPatchDocument)
+        {
+            if(jsonPatchDocument == null)
+            {
+                return BadRequest();
+            }
+
+            var tourFromRepo = await _tourManagementRepository.GetTour(tourId);
+
+            if(tourFromRepo == null)
+            {
+                return NotFound();
+            }
+
+            var tourToPatch = Mapper.Map<TourForUpdate>(tourFromRepo);
+
+            jsonPatchDocument.ApplyTo(tourToPatch);
+
+            Mapper.Map(tourToPatch, tourFromRepo);
+
+            await _tourManagementRepository.UpdateTour(tourFromRepo);
+
+            if(!await _tourManagementRepository.SaveAsync())
+            {
+                throw new Exception("Updating a tour failed on save.");
+            }
+
+            return NoContent();
         }
     }
 }
