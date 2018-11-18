@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TourManagement.API.Dtos;
+using TourManagement.API.Helpers;
 using TourManagement.API.Services;
 
 namespace TourManagement.API.Controllers
@@ -31,7 +33,9 @@ namespace TourManagement.API.Controllers
             var showsFromRepo = await _tourManagementRepository.GetShows(tourId);
 
             var shows = Mapper.Map<IEnumerable<Show>>(showsFromRepo);
+
             return Ok(shows);
         }
+
     }
 }

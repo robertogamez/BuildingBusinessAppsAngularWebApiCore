@@ -55,8 +55,43 @@ namespace TourManagement.API.Controllers
                 throw new Exception("Adding a collection of shows failed on save.");
             }
 
-            return Ok();
+            var showCollectionToReturn = Mapper.Map<IEnumerable<Show>>(showEntities);
+            var showIdsAsString = string.Join(",", showCollectionToReturn.Select(a => a.ShowId));
 
+            return CreatedAtRoute(nameof(GetShowCollection),
+                new { tourId, showIds = showIdsAsString },
+                showCollectionToReturn
+            );
+        }
+
+        [HttpGet("{(showIds)}", Name = nameof(GetShowCollection))]
+        [RequestHeaderMatchesMediaType("Accept", new[] { "application/json",
+            "application/vnd.marvin.showcollection+json"
+        })]
+        public async Task<IActionResult>
+            GetShowCollection(Guid tourId,
+            [ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<Guid> showIds)
+        {
+            if (showIds == null || !showIds.Any())
+            {
+                return BadRequest();
+            }
+
+            if (!await _tourManagementRepository.TourExists(tourId))
+            {
+                return NotFound();
+            }
+
+            var showEntities = await _tourManagementRepository.GetShows(tourId, showIds);
+
+            if (showIds.Count() != showEntities.Count())
+            {
+                return NotFound();
+            }
+
+            var showCollectionToReturn = Mapper.Map<IEnumerable<Show>>(showEntities);
+
+            return Ok(showCollectionToReturn);
         }
     }
 }
