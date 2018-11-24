@@ -161,6 +161,11 @@ namespace TourManagement.API.Controllers
 
         public async Task<IActionResult> AddSpecificTour<T>(T tour) where T : class
         {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
             var tourEntity = Mapper.Map<Entities.Tour>(tour);
 
             if (tourEntity.ManagerId == Guid.Empty)
@@ -200,7 +205,17 @@ namespace TourManagement.API.Controllers
 
             var tourToPatch = Mapper.Map<TourForUpdate>(tourFromRepo);
 
-            jsonPatchDocument.ApplyTo(tourToPatch);
+            jsonPatchDocument.ApplyTo(tourToPatch, ModelState);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            if (!TryValidateModel(tourToPatch))
+            {
+                return BadRequest();
+            }
 
             Mapper.Map(tourToPatch, tourFromRepo);
 
