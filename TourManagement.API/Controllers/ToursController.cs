@@ -105,11 +105,6 @@ namespace TourManagement.API.Controllers
                 "application/vnd.marvin.tour+json" })]
         public async Task<IActionResult> AddTour([FromBody]TourForCreation tour)
         {
-            if (tour == null)
-            {
-                return BadRequest();
-            }
-
             return await AddSpecificTour(tour);
         }
 
@@ -119,11 +114,6 @@ namespace TourManagement.API.Controllers
         public async Task<IActionResult> AddTourWithManager(
             [FromBody]TourWithManagerForCreation tour)
         {
-            if (tour == null)
-            {
-                return BadRequest();
-            }
-
             return await AddSpecificTour(tour);
         }
 
@@ -134,11 +124,6 @@ namespace TourManagement.API.Controllers
             [FromBody] TourWithShowsForCreation tour
         )
         {
-            if(tour == null)
-            {
-                return BadRequest();
-            }
-
             return await AddSpecificTour(tour);
         }
 
@@ -148,20 +133,18 @@ namespace TourManagement.API.Controllers
         public async Task<IActionResult> AddTourWithManagerAndShows(
             [FromBody] TourWithManagerAndShowsForCreation tour)
         {
-            if (tour == null)
-            {
-                return BadRequest();
-            }
-
-            // validation of the DTO happens here
-
             // the rest is the same as for other actions. 
             return await AddSpecificTour(tour);
         }
 
         public async Task<IActionResult> AddSpecificTour<T>(T tour) where T : class
         {
-            if(!ModelState.IsValid)
+            if (tour == null)
+            {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
             {
                 return BadRequest();
             }

@@ -37,7 +37,7 @@ export class TourUpdateComponent implements OnInit, OnDestroy {
         Validators.required,
         Validators.maxLength(200)
       ]],
-      description: [''],
+      description: ['', Validators.required],
       startDate: [],
       endDate: []
     }, {
