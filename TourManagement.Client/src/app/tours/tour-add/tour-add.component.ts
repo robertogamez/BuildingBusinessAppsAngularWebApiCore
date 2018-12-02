@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { Manager } from '../../shared/manager.model';
 import { ShowSingleComponent } from '../shows/show-single/show-single.component';
 import { CustomValidators } from '../../shared/custom-validators';
+import { ValidationErrorHandler } from '../../shared/validation-error-handler';
 
 @Component({
   selector: 'app-tour-add',
@@ -38,8 +39,8 @@ export class TourAddComponent implements OnInit {
       endDate: [],
       shows: this.formBuilder.array([])
     }, {
-      validator: CustomValidators.StartDateBeforeEndDateValidator
-    });
+        validator: CustomValidators.StartDateBeforeEndDateValidator
+      });
 
     // get bands from master data service
     this.masterDataService.getBands()
@@ -63,8 +64,8 @@ export class TourAddComponent implements OnInit {
   }
 
   addTour(): void {
-    if (this.tourForm.dirty 
-        //&& this.tourForm.valid
+    if (this.tourForm.dirty
+      //&& this.tourForm.valid
     ) {
       if (this.isAdmin === true) {
         if (this.tourForm.value.shows.length) {
@@ -76,7 +77,10 @@ export class TourAddComponent implements OnInit {
             .subscribe(
               () => {
                 this.router.navigateByUrl('/tours');
-              });
+              }, 
+              (validationResult) => {
+                ValidationErrorHandler.handleValidationErrors(this.tourForm ,validationResult);
+              } );
         }
         else {
           let tour = automapper.map(
@@ -87,6 +91,9 @@ export class TourAddComponent implements OnInit {
             .subscribe(
               () => {
                 this.router.navigateByUrl('/tours');
+              },
+              (validationResult) => {
+                ValidationErrorHandler.handleValidationErrors(this.tourForm ,validationResult);
               });
         }
       }
@@ -100,6 +107,9 @@ export class TourAddComponent implements OnInit {
             .subscribe(
               () => {
                 this.router.navigateByUrl('/tours');
+              },
+              (validationResult) => {
+                ValidationErrorHandler.handleValidationErrors(this.tourForm ,validationResult);
               });
         }
         else {
@@ -111,6 +121,9 @@ export class TourAddComponent implements OnInit {
             .subscribe(
               () => {
                 this.router.navigateByUrl('/tours');
+              },
+              (validationResult) => {
+                ValidationErrorHandler.handleValidationErrors(this.tourForm ,validationResult);
               });
         }
       }
